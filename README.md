@@ -10,7 +10,7 @@ Credits:
 https://github.com/Ben0xA/nps
 @Ben0xA
 
-Bypassing Application Whitelisting using MSBuild.exe - Device Guard Example and Mitigations 
+Bypassing Application Whitelisting using MSBuild.exe - Device Guard Example and Mitigations
 http://subt0x10.blogspot.com/2016/09/bypassing-application-whitelisting.html
 @subTee
 
@@ -29,28 +29,29 @@ v1.02
 v1.01
   Added "Custom PS1 Payload" option.
 
-v1.0 
+v1.0
   Initial Release
 
 -------------------------------------------------------------------------------------------
 
 Requirements:
 
-pip install -r requirements.txt
+`pip install -r requirements.txt`
 
 -------------------------------------------------------------------------------------------
 
 Setting up samba shares:
- 
-1.) apt-get install samba
-2.) vi/nano/whatever /etc/samba/smb.conf
-3.) add the following to the bottom of the file (change as appropriate)
- 
+
+1. `apt-get install samba`
+2. `vi/nano/whatever /etc/samba/smb.conf`
+3. add the following to the bottom of the file (change as appropriate)
+
+```
 [payloads$]
    comment = Dirty Payloads
    path = /opt/shares/payloads
    browsable = yes
    guest ok = yes
    read only = yes
- 
-4.) service smbd restart
+```
+4. `service smbd restart`
