@@ -23,6 +23,9 @@ https://www.sans.org/reading-room/whitepapers/malicious/sleeping-sandbox-35797
 Hassan.morad@gmail.com
 
 -------------------------------------------------------------------------------------------
+v1.03
+  Cleaned up the output of the payload creation to make it easier to read and copy & paste.
+
 v1.02
   Fixed logic in creation of a new msbuild.rc resource script
 
