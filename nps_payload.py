@@ -178,7 +178,8 @@ def generate_msbuild_nps_msf_payload():
       </Code>
     </Task>
   </UsingTask>
-</Project>""" % psh_payload).close()
+</Project>""" % psh_payload)
+  msbuild_nps_file.close()
 
   print(bcolors.GREEN + "[+]" + bcolors.ENDC + " Metasploit resource script written to msbuild_nps.rc")  
   print(bcolors.GREEN + "[+]" + bcolors.ENDC + " Payload written to msbuild_nps.xml")
