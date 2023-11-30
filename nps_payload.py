@@ -99,7 +99,7 @@ def generate_msbuild_nps_msf_payload():
 
   # Generate payload
   try:
-    msf_payload = input("\nSelect payload: ")
+    msf_payload = int(input("\nSelect payload: "))
     if (options.get(msf_payload) == "custom_ps1_payload"):
       custom_ps1 = raw_input("Enter the location of your custom PS1 file: ")
       encode_pshpayload(custom_ps1)
@@ -226,7 +226,7 @@ def generate_msbuild_nps_msf_hta_payload():
 
     # Generate payloads
     try:
-      msf_payload = input("\nSelect multiple payloads. Enter 99 when finished: ")
+      msf_payload = int(input("\nSelect multiple payloads. Enter 99 when finished: "))
       if (options.get(msf_payload) == "finished"):
         break
       elif (options.get(msf_payload) == "custom_ps1_payload"):
@@ -406,7 +406,7 @@ def main():
                99: quit,
     }
     try:
-      task = input("\nSelect a task: ")
+      task = int(input("\nSelect a task: "))
       options[task]()
     except KeyError:
       pass
